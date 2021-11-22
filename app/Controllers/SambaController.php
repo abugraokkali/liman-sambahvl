@@ -149,7 +149,8 @@ class SambaController{
     function createSambaDomain(){
         $domainName = extensionDb('domainName');
         $domainPassword = extensionDb('domainPassword');
-        $createDomainCommand ="bash -c 'DEBIAN_FRONTEND=noninteractive smb-create-domain -d " . $domainName . " -p " . $domainPassword . " > /tmp/domainLog 2>&1 & disown'";
+        $ip = $this->getIP();
+        $createDomainCommand ="bash -c 'DEBIAN_FRONTEND=noninteractive smb-create-domain -d " . $domainName . " -p " . $domainPassword . " -r ". $ip ." > /tmp/domainLog 2>&1 & disown'";
         runCommand(sudo() . $createDomainCommand);
     }
 
@@ -676,6 +677,11 @@ class SambaController{
         return respond($output);
     }
 
+    function getIP(){
+        $command = "hostname -I | awk '{print $1}'";
+        $ip = runCommand(sudo().$command);
+        return $ip;
+    }
 
 }
 ?>
